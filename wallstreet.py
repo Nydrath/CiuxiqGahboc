@@ -44,3 +44,9 @@ def on_message(message):
             yield from discordclient.send_message(message.channel, querynumbers())
         except discord.errors.Forbidden:
             pass
+
+
+with open("client_data.json", "r") as f:
+    clientdata = json.load(f)
+
+discordclient.run(clientdata["token"])

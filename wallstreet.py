@@ -1,26 +1,29 @@
 import urllib.request
 import json
+import os
 
-
-#     MMMMMM   M                                                                                         MMMMMMMMMMMMMMMMMMMMM                                                                           
-#      MMM+    MMM$7MMMN                                                                                 MMMMMMMMMMMMMMMMMMMMM                                                                           
-#      .MM     .        M                                                                                MM                  $                                                                           
-#      .MM               M                                                                               MM                                                                                              
-#      .MM               M                                                                               MM                                                                                              
-#      .MM               M                                                                               MM                                                                                              
-#      .MM              .M                                                                               MM                                                                                              
-#      .MM              M   MMMMMMMMMMM                    MMMMMMMMMMMM 8MMMMMMMMMM,                     MM                                  ?MMMM7,                                  MMMM               
-#      .MM       M    MM.MM M        MM        MMMMMM      M           :8~        M,    M  M       M  M  MM                        MM:  MN  M     =8            MMM      :.   M.       MM                
-#      .MM       M  +MM              MM              ~M    M                      M,       M       M     MM                          MMM   ?.                   MM       ?             MM                
-#      .MM  M          MM            MM               .=   M                      M,       M       M     MM                            MM  .,                   $M       M             MM                
-#      .MM ,MZ          D8           MM                M   M                      M,       M       M     MM                              M? D.                  ?D        M            MM                
-#      .MM MMM           M           MM         MM  8Z M   M                      M,       M       M     MM                            MM    M                  M.         M$  MM      ~M    MM  M       
-#      .MM MM            M           MM       =M       M   M                      M,       M       M     MM                           MD   ,7                   M        N:      M.     M    ,    =      
-#      .MM DM            M           MM       M        M   M                      M,       M       M     MM                     M   MM     M                   ,8        M              MM         M     
-#      .MM  M           M            MM      M?        M   M                      M,       M       M     MM                     MM MM      M           MM      M       M M               M         M     
-#      :MM   M$       7M             MM   I  MM       .M   M                      M,       M       M     MM                      MMM        D        7MMM     .    .MMMM M          I     M        M     
-#     :MMMM    NMMMMMD               MMMMM7 MMMM      MM  .M                      MMMMM    MMMMMMMMM    DMMM                   ~MZ ,M?       OM.   MMM      M    MMM      M.     MMMM      IM    8O      
-#                                                                                                                                                           MMM+             NN                          
+def direction(x):
+    if x > 0:
+        return "↗"
+    elif x < 0:
+        return "↘"
+    else:
+        return "→"
 
 response = urllib.request.urlopen("https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,LTC,ETH,XMR,MAID,DASH,EDR,ZEC,NXT,XRP&tsyms=USD")
-print(response.read())
+try:
+    data = json.loads(str(response.read(), 'utf-8'))
+except:
+    print(response.read())
+
+if os.path.exists("oldvalues.json"):
+    with open("oldvalues.json", "r") as f:
+        olddata = json.loads(f.read())
+else:
+    olddata = data.copy()
+
+for key, value in sorted(data.items()):
+    print(key, direction(value["USD"]-olddata[key]["USD"]), value["USD"])
+
+with open("oldvalues.json", "w") as f:
+    f.write(json.dumps(data))

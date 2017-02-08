@@ -2,6 +2,7 @@ import urllib.request
 import json
 import os
 import discord
+import asyncio
 
 def direction(x):
     if x > 0:
@@ -39,7 +40,7 @@ discordclient = discord.Client()
 @discordclient.event
 @asyncio.coroutine
 def on_message(message):
-    if discordclient.user.mention in message.content and not message.author.bot and message.channel == "#wallstreet":
+    if discordclient.user.mention in message.content and not message.author.bot and message.channel.name == "wallstreet":
         try:
             yield from discordclient.send_message(message.channel, querynumbers())
         except discord.errors.Forbidden:
